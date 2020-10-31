@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MDToJson", "MDToJson\MDToJson.csproj", "{3C164AA4-D562-4B4B-8604-78A584618BEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Markdig.Renderers.Json", "Markdig.Renderers.Json\Markdig.Renderers.Json.csproj", "{44982C31-7B37-4FDE-8ED9-279BF583C9BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Markdig.Renderers.Json.Tests", "Markdig.Renderers.Json.Tests\Markdig.Renderers.Json.Tests.csproj", "{9738130E-A436-4CBB-BFDB-1D309461E24F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3C164AA4-D562-4B4B-8604-78A584618BEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C164AA4-D562-4B4B-8604-78A584618BEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C164AA4-D562-4B4B-8604-78A584618BEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C164AA4-D562-4B4B-8604-78A584618BEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44982C31-7B37-4FDE-8ED9-279BF583C9BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44982C31-7B37-4FDE-8ED9-279BF583C9BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44982C31-7B37-4FDE-8ED9-279BF583C9BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44982C31-7B37-4FDE-8ED9-279BF583C9BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9738130E-A436-4CBB-BFDB-1D309461E24F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9738130E-A436-4CBB-BFDB-1D309461E24F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9738130E-A436-4CBB-BFDB-1D309461E24F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9738130E-A436-4CBB-BFDB-1D309461E24F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -14,7 +14,7 @@ namespace MDToJson
     public class ConvertMarkdownToJson
     {
         private string currentFilename;
-        
+
         public string ProcessFile(string filename)
         {
             currentFilename = filename;
@@ -36,19 +36,14 @@ namespace MDToJson
         public string ProcessText(string contents)
         {
             var yamlHeader = ReadYamlHeader(ref contents);
-            
+
             var output = new StringWriter();
             output.Write("{");
 
             if (!string.IsNullOrEmpty(currentFilename))
-            {
-                output.WriteLine($"\"filename\": \"{currentFilename}\", ");
-            }
-            
-            if (yamlHeader != null)
-            {
-                output.WriteLine($"\"metadata\": {yamlHeader},");
-            }
+                output.WriteLine($"\"filename\": \"{currentFilename.Replace("\\", "\\\\")}\", ");
+
+            if (yamlHeader != null) output.WriteLine($"\"metadata\": {yamlHeader},");
 
             output.WriteLine("\"document\": {");
             output.Write("\"entries\": ");
@@ -63,7 +58,7 @@ namespace MDToJson
             output.WriteLine("}}");
             output.Flush();
 
-            string finalJson = output.ToString();
+            var finalJson = output.ToString();
 
             try
             {
@@ -74,14 +69,14 @@ namespace MDToJson
                 var parserException = new Exception(ex.Message, ex);
                 parserException.Data.Add("json", finalJson);
                 Debug.WriteLine(finalJson);
-                
+
                 throw parserException;
             }
         }
-        
+
         private static string PrettyJson(string unPrettyJson)
         {
-            var options = new JsonSerializerOptions { WriteIndented = true };
+            var options = new JsonSerializerOptions {WriteIndented = true};
             var jsonElement = JsonSerializer.Deserialize<JsonElement>(unPrettyJson);
             return JsonSerializer.Serialize(jsonElement, options);
         }
@@ -90,7 +85,7 @@ namespace MDToJson
         {
             var reader = new StringReader(contents);
 
-            string line = reader.ReadLine();
+            var line = reader.ReadLine();
             while (string.IsNullOrWhiteSpace(line))
                 line = reader.ReadLine();
 
@@ -102,18 +97,20 @@ namespace MDToJson
             while (true)
             {
                 line = reader.ReadLine();
-                if (line == null || line.Trim().All(c => c == '-'))
+                if (line?.Trim().All(c => c == '-') != false)
                     break;
                 yamlContents.AppendLine(line);
             }
 
             contents = reader.ReadToEnd();
-            
+
             if (yamlContents.Length == 0)
                 return null;
-            
-            var result = (Dictionary<object,object>) new Deserializer().Deserialize(new StringReader(yamlContents.ToString()));
-            return JsonSerializer.Serialize(result.ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value?.ToString()??""));
+
+            var result =
+                (Dictionary<object, object>) new Deserializer().Deserialize(new StringReader(yamlContents.ToString()));
+            return JsonSerializer.Serialize(result.ToDictionary(kvp => kvp.Key.ToString(),
+                kvp => kvp.Value?.ToString() ?? ""));
         }
     }
 }

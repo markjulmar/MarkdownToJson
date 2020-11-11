@@ -7,9 +7,14 @@
         <PublishSingleFile>false</PublishSingleFile>
         <TrimMode>link</TrimMode>
         <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
+        <Authors>Mark Smith</Authors>
+        <Company>Microsoft</Company>
+        <Product>Markdown To Json</Product>
+        <Copyright>Convert a Markdown file to JSON</Copyright>
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="CommandLineParser" Version="2.8.0" />
       <PackageReference Include="Markdig" Version="0.22.0" />
       <PackageReference Include="YamlDotNet" Version="8.1.2" />
     </ItemGroup>

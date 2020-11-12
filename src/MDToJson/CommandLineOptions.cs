@@ -15,5 +15,8 @@ namespace MDToJson
 
         [Option('f', "Overwrite", HelpText = "Overwrite any existing file")]
         public bool OverwriteOutput { get; set; }
+        
+        [Option('s', "StrictEncoding", HelpText = "Use strict JavaScript encoding for unsafe characters, defaults to False", Default = false)]
+        public bool StrictEncoding { get; set; }
     }
 }

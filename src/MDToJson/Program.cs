@@ -24,8 +24,12 @@ namespace MDToJson
             if (!string.IsNullOrEmpty(options.OutputFile))
             {
                 outputFile = options.OutputFile;
-                if (Path.GetInvalidFileNameChars().Any(ch => outputFile.Contains(ch))
-                    || Path.GetInvalidPathChars().Any(ch => outputFile.Contains(ch)))
+
+                string folderName = Path.GetDirectoryName(outputFile) ?? "";
+                string fileName = Path.GetFileName(outputFile) ?? "";
+
+                if (Path.GetInvalidFileNameChars().Any(ch => fileName.Contains(ch))
+                    || Path.GetInvalidPathChars().Any(ch => folderName.Contains(ch)))
                 {
                     Console.Error.WriteLine($"Invalid output filename - {outputFile}.");
                     return -1;
@@ -46,7 +50,7 @@ namespace MDToJson
                 return -3;
             }
 
-            var converter = new ConvertMarkdownToJson();
+            var converter = new ConvertMarkdownToJson() { StrictEncoding = options.StrictEncoding };
 
             TextWriter writer = Console.Out;
             if (outputFile != null)

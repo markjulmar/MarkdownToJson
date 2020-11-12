@@ -9,9 +9,8 @@ namespace Markdig.Renderers.Json.Blocks
         {
             renderer.EnsureLine();
             string type = listBlock.IsOrdered ? "ordered-list" : "bulleted-list";
-            
-            renderer.Write("{");
-            renderer.Write($"\"type\": \"{type}\"");
+           
+            renderer.Write($"{{ \"type\": \"{type}\"");
             
             if (listBlock.IsOrdered)
             {

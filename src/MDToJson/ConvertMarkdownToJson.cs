@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using Markdig;
 using Markdig.Renderers.Json;
@@ -14,6 +16,7 @@ namespace MDToJson
     public class ConvertMarkdownToJson
     {
         private string currentFilename;
+        public bool StrictEncoding { get; set; }
 
         public string ProcessFile(string filename)
         {
@@ -33,15 +36,26 @@ namespace MDToJson
             }
         }
 
+        private static readonly string ByteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
+        private static string StripBom(string input)
+        {
+            if (input.StartsWith(ByteOrderMarkUtf8, StringComparison.Ordinal))
+            {
+                input = input.Remove(0, ByteOrderMarkUtf8.Length);
+            }
+            return input;
+        }
         public string ProcessText(string contents)
         {
+            contents = StripBom(contents);
+            
             var yamlHeader = ReadYamlHeader(ref contents);
 
             var output = new StringWriter();
             output.Write("{");
 
             if (!string.IsNullOrEmpty(currentFilename))
-                output.WriteLine($"\"filename\": \"{currentFilename.Replace("\\", "\\\\")}\", ");
+                output.WriteLine($"\"filename\": \"{UnifyFilename(currentFilename)}\", ");
 
             if (yamlHeader != null) output.WriteLine($"\"metadata\": {yamlHeader},");
 
@@ -74,9 +88,18 @@ namespace MDToJson
             }
         }
 
-        private static string PrettyJson(string unPrettyJson)
+        private static string UnifyFilename(string filename) 
+            => filename.Replace('\\', '/').Substring((Path.GetPathRoot(filename)??"").Length);
+
+        private string PrettyJson(string unPrettyJson)
         {
             var options = new JsonSerializerOptions {WriteIndented = true};
+
+            if (!StrictEncoding)
+            {
+                options.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+            }
+
             var jsonElement = JsonSerializer.Deserialize<JsonElement>(unPrettyJson);
             return JsonSerializer.Serialize(jsonElement, options);
         }
@@ -110,7 +133,19 @@ namespace MDToJson
             var result =
                 (Dictionary<object, object>) new Deserializer().Deserialize(new StringReader(yamlContents.ToString()));
             return JsonSerializer.Serialize(result.ToDictionary(kvp => kvp.Key.ToString(),
-                kvp => kvp.Value?.ToString() ?? ""));
+                kvp => ToJsonValue(kvp.Value)));
+        }
+
+        private static object ToJsonValue(object value)
+        {
+            return value switch
+            {
+                null => string.Empty,
+                string _ => value,
+                _ => value is IEnumerable ie
+                    ? (object) (from object obj in ie select ToJsonValue(obj).ToString()).ToList()
+                    : value.ToString()
+            };
         }
     }
 }

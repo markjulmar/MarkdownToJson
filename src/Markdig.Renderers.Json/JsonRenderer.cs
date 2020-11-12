@@ -87,10 +87,9 @@ namespace Markdig.Renderers.Json
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public JsonRenderer WriteEscape(string content)
         {
-            if (string.IsNullOrEmpty(content))
-                return this;
+            if (!string.IsNullOrEmpty(content))
+                WriteEscape(content, 0, content.Length);
 
-            WriteEscape(content, 0, content.Length);
             return this;
         }
 
@@ -98,24 +97,22 @@ namespace Markdig.Renderers.Json
         /// Writes the content escaped for XAML.
         /// </summary>
         /// <param name="slice">The slice.</param>
-        /// <param name="softEscape">Only escape &lt; and &amp;</param>
         /// <returns>This instance</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public JsonRenderer WriteEscape(ref StringSlice slice, bool softEscape = false)
+        public JsonRenderer WriteEscape(ref StringSlice slice)
         {
-            return slice.Start > slice.End 
+            return slice.Start > slice.End
                 ? this 
-                : WriteEscape(slice.Text, slice.Start, slice.Length, softEscape);
+                : WriteEscape(slice.Text, slice.Start, slice.Length);
         }
 
         /// <summary>
         /// Writes the content escaped for XAML.
         /// </summary>
         /// <param name="slice">The slice.</param>
-        /// <param name="softEscape">Only escape &lt; and &amp;</param>
         /// <returns>This instance</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public JsonRenderer WriteEscape(StringSlice slice, bool softEscape = false) => WriteEscape(ref slice, softEscape);
+        public JsonRenderer WriteEscape(StringSlice slice) => WriteEscape(ref slice);
 
         /// <summary>
         /// Writes the content escaped for XAML.
@@ -123,9 +120,8 @@ namespace Markdig.Renderers.Json
         /// <param name="content">The content.</param>
         /// <param name="offset">The offset.</param>
         /// <param name="length">The length.</param>
-        /// <param name="softEscape">Only escape &lt; and &amp;</param>
         /// <returns>This instance</returns>
-        private JsonRenderer WriteEscape(string content, int offset, int length, bool softEscape = false)
+        private JsonRenderer WriteEscape(string content, int offset, int length)
         {
             if (string.IsNullOrEmpty(content) || length == 0)
                 return this;
@@ -136,40 +132,16 @@ namespace Markdig.Renderers.Json
             {
                 switch (content[offset])
                 {
-                    case '<':
-                        Write(content, previousOffset, offset - previousOffset);
-                        Write("&lt;");
-                        previousOffset = offset + 1;
-                        break;
-                    
                     case '\\':
                         Write(content, previousOffset, offset - previousOffset);
-                        Write("\\\\");
-                        previousOffset = offset + 1;
-                        break;
-
-                    case '>':
-                        if (!softEscape)
-                        {
-                            Write(content, previousOffset, offset - previousOffset);
-                            Write("&gt;");
-                            previousOffset = offset + 1;
-                        }
-                        break;
-
-                    case '&':
-                        Write(content, previousOffset, offset - previousOffset);
-                        Write("&amp;");
+                        Write(@"\\");
                         previousOffset = offset + 1;
                         break;
 
                     case '"':
-                        if (!softEscape)
-                        {
-                            Write(content, previousOffset, offset - previousOffset);
-                            Write("&quot;");
-                            previousOffset = offset + 1;
-                        }
+                        Write(content, previousOffset, offset - previousOffset);
+                        Write("\\\"");
+                        previousOffset = offset + 1;
                         break;
                 }
             }
